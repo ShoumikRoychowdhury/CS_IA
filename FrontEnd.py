@@ -76,6 +76,7 @@ class Form2(Form2Template):
 
     
     training_data = []
+   
 
 def main():
     for category in CATEGORIES:
@@ -91,6 +92,48 @@ def main():
                 print(image.shape)
 
                 training_data.append([nib.load(os.path.join(path,file)).get_fdata(),class_num])
+                
+    if ask_rotate.lower() == 'y':
+        ask_rotate_num = int(input('OK. By 90° 180° or 270°? '))
+        if ask_rotate_num == 90 or ask_rotate_num == 180 or ask_rotate_num == 270:
+          nx, ny, nz, nw = image_array.shape
+        if not os.path.exists(outputfile):
+            os.makedirs(outputfile)
+
+        total_volumes = image_array.shape[3]
+        total_slices = image_array.shape[2]
+
+        # iterate through volumes
+        for current_volume in range(0, total_volumes):
+            slice_counter = 0
+            # iterate through slices
+            for current_slice in range(0, total_slices):
+                if (slice_counter % 1) == 0
+                    if ask_rotate.lower() == 'y':
+                        if ask_rotate_num == 90 or ask_rotate_num == 180 or ask_rotate_num == 270:
+                          
+                            if ask_rotate_num == 90:
+                                data = numpy.rot90(image_array[current_slice, current_volume:,:, ])
+                            elif ask_rotate_num == 180:
+                                data = numpy.rot90(numpy.rot90(image_array[current_slice, current_volume:,  :, ]))
+                            elif ask_rotate_num == 270:
+                                data = numpy.rot90(
+                                    numpy.rot90(numpy.rot90(image_array[current_slice, current_volume:,  :, ])))
+                    elif ask_rotate.lower() == 'n':
+                        data = image_array[current_slice, current_volume:, :, ]
+
+                    
+                    print('Saving image...')
+                    image_name = inputfile[:-4] + "_t" + "{:0>3}".format(
+                        str(current_volume + 1)) + "_z" + "{:0>3}".format(str(current_slice + 1)) + ".png"
+                    imageio.imwrite(image_name, data)
+                    print('Saved.')
+
+                    # move images to folder
+                    print('Moving files...')
+                    src = image_name
+                    shutil.move(src, outputfile)
+                    slice_counter += 1
 
 if __name__ == '__main__':
     main()
